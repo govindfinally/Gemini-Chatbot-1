@@ -2,698 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Govind's AI Summarizer & TTS</title>
+    <title>Govind AI - Summarize & Speak</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 102, 196, 0.3), transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(138, 43, 226, 0.2), transparent 50%);
-            animation: gradientShift 15s ease infinite;
-            z-index: 0;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-            animation: fadeInDown 1s ease;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .header h1 {
-            font-size: 3.5em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            font-size: 1.2em;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 400;
-        }
-
-        .main-card {
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 50px;
-            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
-            animation: fadeInUp 1s ease;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .tab {
-            padding: 15px 30px;
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .tab.active {
-            color: #667eea;
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border-radius: 3px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .input-group {
-            margin-bottom: 30px;
-        }
-
-        .input-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 15px;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 250px;
-            padding: 20px;
-            background: rgba(10, 10, 15, 0.6);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            color: white;
-            font-size: 1em;
-            font-family: 'Inter', sans-serif;
-            resize: vertical;
-            transition: all 0.3s ease;
-            line-height: 1.6;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            background: rgba(10, 10, 15, 0.8);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        textarea::placeholder {
-            color: rgba(255, 255, 255, 0.3);
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .btn {
-            padding: 18px 36px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .results-section {
-            margin-top: 40px;
-            display: none;
-            animation: slideUp 0.5s ease;
-        }
-
-        .results-section.show {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .result-card {
-            background: rgba(102, 126, 234, 0.05);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 20px;
-        }
-
-        .result-title {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .summary-content {
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.8;
-            font-size: 1.05em;
-            background: rgba(10, 10, 15, 0.4);
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }
-
-        .keywords-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .keyword-tag {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            color: #a9b7ff;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 0.95em;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .keyword-tag:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .audio-section {
-            margin-top: 40px;
-            display: none;
-        }
-
-        .audio-section.show {
-            display: block;
-            animation: slideUp 0.5s ease;
-        }
-
-        .audio-player-wrapper {
-            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
-            border: 1px solid rgba(240, 147, 251, 0.2);
-            border-radius: 16px;
-            padding: 30px;
-        }
-
-        audio {
-            width: 100%;
-            height: 60px;
-            border-radius: 12px;
-            filter: hue-rotate(220deg) saturate(1.5);
-        }
-
-        .alert {
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-            display: none;
-            animation: shake 0.5s ease;
-        }
-
-        .alert.show {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
-
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            border-top: 3px solid white;
-            width: 20px;
-            height: 20px;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5em;
-            }
-
-            .main-card {
-                padding: 30px 20px;
-            }
-
-            .tabs {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .tab {
-                text-align: left;
-            }
-        }
+        body { background: #f3f7fa; padding-top: 50px; }
+        .container { max-width: 650px; }
+        .card { margin-top: 1.5rem; }
+        .spinner-border { margin-top: 1.5rem; }
     </style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-
+<nav class="navbar navbar-dark bg-primary mb-4">
     <div class="container">
-        <div class="header">
-            <div class="logo">
-                <div class="logo-icon"></div>
+        <span class="navbar-brand mb-0 h1">Govind AI</span>
+    </div>
+</nav>
+<div class="container">
+    <div class="card shadow">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Text Summarizer & Speaker</h4>
+            <form id="summarizeForm">
+                <div class="form-group">
+                    <label for="textInput">Enter text to summarize and convert to speech:</label>
+                    <textarea id="textInput" name="text" class="form-control" rows="6" required></textarea>
+                    <small id="wc" class="form-text text-muted float-right"></small>
+                </div>
+                <button type="submit" class="btn btn-primary">Summarize & Speak</button>
+            </form>
+            <div id="loader" style="display:none; text-align:center;">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>Processing, please wait...</p>
             </div>
-            <h1>Govind's AI Suite</h1>
-            <p>Next-Generation Text Intelligence & Voice Synthesis</p>
-        </div>
-
-        <div class="main-card">
-            <div class="tabs">
-                <button class="tab active" data-tab="summarize">
-                    ✨ Text Summarizer
-                </button>
-                <button class="tab" data-tab="tts">
-                    🎙️ Text-to-Speech
-                </button>
-            </div>
-
-            <!-- Summarize Tab -->
-            <div class="tab-content active" id="summarize-content">
-                <div class="input-group">
-                    <div class="input-label">
-                        <span>📄</span>
-                        <span>Enter Your Text</span>
-                    </div>
-                    <textarea id="summarizeInput" placeholder="Paste or type your text here for AI-powered summarization. The system will extract key insights and important keywords..."></textarea>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-primary" id="summarizeBtn">
-                        <span>✨</span>
-                        <span>Generate Summary</span>
-                    </button>
-                </div>
-
-                <div class="results-section" id="summarizeResults">
-                    <div class="result-card">
-                        <div class="result-title">
-                            <span>📊</span>
-                            <span>AI-Generated Summary</span>
-                        </div>
-                        <div class="summary-content" id="summaryText"></div>
-                    </div>
-
-                    <div class="result-card">
-                        <div class="result-title">
-                            <span>🏷️</span>
-                            <span>Key Topics & Keywords</span>
-                        </div>
-                        <div class="keywords-container" id="keywordsContainer"></div>
+            <div id="alertPlaceholder" style="margin-top: 1rem;"></div>
+            <div id="outputSection" style="display:none;">
+                <div class="card mt-4">
+                    <div class="card-header">Summary</div>
+                    <div class="card-body">
+                        <p id="summaryText" style="font-weight:bold;"></p>
+                        <h6>Keywords:</h6>
+                        <p id="keywordsText"></p>
+                        <h6>Audio Output:</h6>
+                        <audio id="audioPlayer" controls style="width:100%;"></audio>
+                        <br>
+                        <a id="downloadLink" class="btn btn-success btn-sm mt-3 mb-1" href="#" download>Download Audio</a>
+                        <button class="btn btn-outline-secondary btn-sm mt-3 mb-1" onclick="copySummary()">Copy Summary</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- TTS Tab -->
-            <div class="tab-content" id="tts-content">
-                <div class="input-group">
-                    <div class="input-label">
-                        <span>🎤</span>
-                        <span>Text to Convert</span>
-                    </div>
-                    <textarea id="ttsInput" placeholder="Enter the text you want to convert to speech. The AI will generate natural-sounding audio..."></textarea>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-secondary" id="ttsBtn">
-                        <span>🔊</span>
-                        <span>Generate Audio</span>
-                    </button>
-                </div>
-
-                <div class="audio-section" id="audioSection">
-                    <div class="audio-player-wrapper">
-                        <div class="result-title">
-                            <span>🎵</span>
-                            <span>Audio Playback</span>
-                        </div>
-                        <audio id="audioPlayer" controls></audio>
-                    </div>
-                </div>
-            </div>
-
-            <div class="alert alert-error" id="alertBox">
-                <span>⚠️</span>
-                <span id="alertMessage"></span>
             </div>
         </div>
     </div>
+    <footer class="footer mt-4 text-center text-muted">
+        <small>Made by Govind • &copy; 2025</small>
+    </footer>
+</div>
+<script>
+  // Word Count
+  document.getElementById('textInput').addEventListener('input', function() {
+    let wc = this.value.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wc').innerText = `Word count: ${wc}`;
+  });
 
-    <script>
-        // Generate stars
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 3 + 's';
-            starsContainer.appendChild(star);
-        }
+  // Form Submit
+  document.getElementById('summarizeForm').addEventListener('submit', async function(e){
+    e.preventDefault();
 
-        // Tab switching
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
+    // Reset UI
+    document.getElementById('outputSection').style.display = 'none';
+    document.getElementById('alertPlaceholder').innerHTML = '';
+    document.getElementById('loader').style.display = 'block';
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(tc => tc.classList.remove('active'));
-                
-                tab.classList.add('active');
-                const targetTab = tab.getAttribute('data-tab');
-                document.getElementById(`${targetTab}-content`).classList.add('active');
-            });
-        });
+    const text = document.getElementById('textInput').value;
+    try {
+      // 1. Summarization
+      const summaryResp = await fetch('/summarize', {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: text})
+      });
+      const summaryData = await summaryResp.json();
 
-        // Elements
-        const summarizeInput = document.getElementById('summarizeInput');
-        const summarizeBtn = document.getElementById('summarizeBtn');
-        const summarizeResults = document.getElementById('summarizeResults');
-        const summaryText = document.getElementById('summaryText');
-        const keywordsContainer = document.getElementById('keywordsContainer');
+      if(summaryData.error) throw new Error(summaryData.error);
+      // 2. Text-to-speech with summary (not full original text)
+      const ttsResp = await fetch('/speak', {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text: summaryData.summary})
+      });
+      const ttsData = await ttsResp.json();
 
-        const ttsInput = document.getElementById('ttsInput');
-        const ttsBtn = document.getElementById('ttsBtn');
-        const audioSection = document.getElementById('audioSection');
-        const audioPlayer = document.getElementById('audioPlayer');
+      if(ttsData.error) throw new Error(ttsData.error);
 
-        const alertBox = document.getElementById('alertBox');
-        const alertMessage = document.getElementById('alertMessage');
+      // 3. Display
+      document.getElementById('summaryText').innerText = summaryData.summary;
+      document.getElementById('keywordsText').innerText = Array.isArray(summaryData.keywords) ? summaryData.keywords.join(', ') : summaryData.keywords;
+      document.getElementById('audioPlayer').src = ttsData.audio_url;
+      document.getElementById('downloadLink').href = ttsData.download_url;
+      document.getElementById('outputSection').style.display = 'block';
+    } catch(e) {
+      showAlert(e.message || "An unexpected error occurred.");
+    } finally {
+      document.getElementById('loader').style.display = 'none';
+    }
+  });
 
-        function showAlert(message) {
-            alertMessage.textContent = message;
-            alertBox.classList.add('show');
-            setTimeout(() => alertBox.classList.remove('show'), 5000);
-        }
+  function showAlert(msg) {
+    document.getElementById('alertPlaceholder').innerHTML =
+      `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        ${msg}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+       </div>`;
+  }
 
-        function setLoading(button, isLoading) {
-            const span = button.querySelector('span:last-child');
-            if (isLoading) {
-                button.disabled = true;
-                button.dataset.originalText = span.textContent;
-                span.innerHTML = '<div class="spinner"></div>';
-            } else {
-                button.disabled = false;
-                span.textContent = button.dataset.originalText;
-            }
-        }
-
-        // Summarize functionality
-        summarizeBtn.addEventListener('click', async () => {
-            const text = summarizeInput.value.trim();
-            if (!text) {
-                showAlert('Please enter some text to summarize.');
-                return;
-            }
-
-            setLoading(summarizeBtn, true);
-            summarizeResults.classList.remove('show');
-
-            try {
-                const response = await fetch('/summarize', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to summarize');
-                }
-
-                summaryText.textContent = data.summary;
-                keywordsContainer.innerHTML = '';
-                
-                data.keywords.forEach(keyword => {
-                    const tag = document.createElement('div');
-                    tag.className = 'keyword-tag';
-                    tag.textContent = keyword;
-                    keywordsContainer.appendChild(tag);
-                });
-
-                summarizeResults.classList.add('show');
-            } catch (error) {
-                showAlert(error.message);
-            } finally {
-                setLoading(summarizeBtn, false);
-            }
-        });
-
-        // TTS functionality
-        ttsBtn.addEventListener('click', async () => {
-            const text = ttsInput.value.trim();
-            if (!text) {
-                showAlert('Please enter some text for text-to-speech conversion.');
-                return;
-            }
-
-            setLoading(ttsBtn, true);
-            audioSection.classList.remove('show');
-
-            try {
-                const response = await fetch('/speak', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to generate audio');
-                }
-
-                audioPlayer.src = data.audio_url;
-                audioSection.classList.add('show');
-                audioPlayer.play();
-            } catch (error) {
-                showAlert(error.message);
-            } finally {
-                setLoading(ttsBtn, false);
-            }
-        });
-    </script>
+  function copySummary() {
+    const summary = document.getElementById('summaryText').innerText;
+    navigator.clipboard.writeText(summary).then(
+      () => showAlert("Summary copied!", "success"),
+      () => showAlert("Copy failed.")
+    );
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
