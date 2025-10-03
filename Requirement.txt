@@ -1,0 +1,56 @@
+# Core
+flask
+requests
+python-dotenv==1.0.1
+
+# NLP / ML
+nltk
+spacy
+scikit-learn
+
+# Deep Learning / Transformers
+torch
+torchvision
+torchaudio
+transformers>=4.40.0
+sentencepiece
+huggingface-hub
+datasets
+accelerate>=0.29.0
+protobuf
+
+# OpenAI (ChatGPT, GPT-4, etc.)
+openai
+
+# Anthropic (Claude)
+anthropic
+
+# Google Gemini (Generative AI)
+google-generativeai
+
+# Hugging Face Inference API
+huggingface_hub
+
+# Speech (STT + TTS)
+SpeechRecognition
+pyttsx3
+gTTS
+pyaudio
+
+# Database / Storage
+sqlalchemy
+sqlite-utils
+
+# Async / Websocket (for streaming chat)
+fastapi
+uvicorn
+websockets
+
+# Utilities
+pandas
+numpy
+tqdm
+
+# LangChain
+langchain>=0.2.0
+langchain-huggingface>=0.0.8
