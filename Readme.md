@@ -1,7 +1,9 @@
 # 🚀 Govind's AI Suite - Text Summarizer & TTS
 
 A beautiful, modern web application that provides AI-powered text summarization and text-to-speech conversion with a stunning dark-themed UI.
-
+* Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.128.226.241:5000
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
